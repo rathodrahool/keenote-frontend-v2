@@ -1,0 +1,110 @@
+# Keenote Design System Guidelines
+
+## Color Palette
+- Primary: Green
+  - Main: #10B981 (Emerald-500)
+  - Light: #34D399 (Emerald-400)
+  - Dark: #059669 (Emerald-600)
+- Neutral:
+  - Background: #FFFFFF
+  - Surface: #F9FAFB
+  - Border: #E5E7EB
+  - Text: #111827
+
+## Typography
+- Font Family: Inter (System UI fallback)
+- Scale:
+  - Heading 1: text-3xl (30px) font-bold
+  - Heading 2: text-2xl (24px) font-semibold
+  - Heading 3: text-xl (20px) font-semibold
+  - Body: text-base (16px) font-normal
+  - Small: text-sm (14px) font-normal
+
+## Component Priority
+1. React Built-in Components
+2. Custom Components using React + Tailwind
+3. Established React Libraries (if needed):
+   - @heroicons/react for icons
+   - @headlessui/react for accessible components
+   - react-beautiful-dnd for drag-and-drop
+   - react-query for data fetching
+
+## Layout Guidelines
+- Container max-width: max-w-7xl
+- Spacing System:
+  - xs: 0.5rem (2px)
+  - sm: 1rem (4px)
+  - md: 1.5rem (6px)
+  - lg: 2rem (8px)
+  - xl: 2.5rem (10px)
+
+## Components Style Guide
+
+### Buttons
+```tsx
+// Primary Button
+<button className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-md">
+  Button Text
+</button>
+
+// Secondary Button
+<button className="border border-emerald-500 text-emerald-500 hover:bg-emerald-50 px-4 py-2 rounded-md">
+  Button Text
+</button>
+```
+
+### Cards
+```tsx
+<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+  {/* Card content */}
+</div>
+```
+
+### Form Elements
+```tsx
+// Input
+<input className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" />
+
+// Select
+<select className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+  {/* Options */}
+</select>
+```
+
+## Navigation
+- Top navbar: h-16 with white background
+- Sidebar: w-64 with gray-50 background
+- Content area: flex-1 with gray-100 background
+
+## Responsive Design
+- Mobile: < 640px
+- Tablet: 640px - 1024px
+- Desktop: > 1024px
+- Use Tailwind breakpoints (sm, md, lg, xl)
+
+## Loading States
+- Use skeleton loading with pulse animation
+- Loading spinner in primary color
+
+## Accessibility
+- ARIA labels on interactive elements
+- Sufficient color contrast (WCAG 2.1)
+- Keyboard navigation support
+- Focus indicators
+
+## Best Practices
+1. Maintain consistent spacing
+2. Use semantic HTML
+3. Implement responsive design patterns
+4. Follow accessibility guidelines
+5. Keep components modular and reusable
+
+## State Management
+- Use React Context for global state
+- React Query for server state
+- Local state with useState where appropriate
+
+## Error Handling
+- Toast notifications for user feedback
+- Inline form validation
+- Fallback UI for errors
