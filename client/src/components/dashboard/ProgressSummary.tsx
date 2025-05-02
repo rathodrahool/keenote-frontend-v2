@@ -39,23 +39,23 @@ export function ProgressSummary() {
   const isLoading = tasksLoading || sessionsLoading;
 
   return (
-    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+    <div className="grid grid-cols-1 gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-6 md:mb-8">
       {/* Tasks Completed Card */}
-      <Card>
-        <CardContent className="p-5">
+      <Card className="overflow-hidden shadow-sm">
+        <CardContent className="p-4 sm:p-5">
           <div className="flex items-center">
-            <div className="flex-shrink-0 bg-emerald-100 rounded-md p-3">
-              <Check className="h-6 w-6 text-emerald-600" />
+            <div className="flex-shrink-0 bg-emerald-100 rounded-md p-2 sm:p-3">
+              <Check className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
             </div>
-            <div className="ml-5 w-0 flex-1">
+            <div className="ml-3 sm:ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
+                <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">
                   Tasks Completed
                 </dt>
                 <dd>
-                  <div className="text-lg font-medium text-gray-900">
+                  <div className="text-base sm:text-lg font-medium text-gray-900">
                     {isLoading ? (
-                      <Skeleton className="h-7 w-16" />
+                      <Skeleton className="h-6 sm:h-7 w-16" />
                     ) : (
                       `${completedTasks}/${totalTasks}`
                     )}
@@ -65,7 +65,7 @@ export function ProgressSummary() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="bg-gray-50 px-5 py-3">
+        <CardFooter className="bg-gray-50 px-4 sm:px-5 py-2 sm:py-3">
           <div className="text-sm w-full">
             <div className="flex justify-between items-center mb-1">
               <span className="text-xs font-medium text-gray-500">
@@ -86,21 +86,21 @@ export function ProgressSummary() {
       </Card>
 
       {/* Time Tracked Card */}
-      <Card>
-        <CardContent className="p-5">
+      <Card className="overflow-hidden shadow-sm">
+        <CardContent className="p-4 sm:p-5">
           <div className="flex items-center">
-            <div className="flex-shrink-0 bg-blue-100 rounded-md p-3">
-              <Clock className="h-6 w-6 text-blue-600" />
+            <div className="flex-shrink-0 bg-blue-100 rounded-md p-2 sm:p-3">
+              <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
-            <div className="ml-5 w-0 flex-1">
+            <div className="ml-3 sm:ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
+                <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">
                   Time Tracked
                 </dt>
                 <dd>
-                  <div className="text-lg font-medium text-gray-900">
+                  <div className="text-base sm:text-lg font-medium text-gray-900">
                     {isLoading ? (
-                      <Skeleton className="h-7 w-20" />
+                      <Skeleton className="h-6 sm:h-7 w-20" />
                     ) : (
                       formatDuration(totalMinutes)
                     )}
@@ -110,8 +110,8 @@ export function ProgressSummary() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="bg-gray-50 px-5 py-3">
-          <div className="text-sm">
+        <CardFooter className="bg-gray-50 px-4 sm:px-5 py-2 sm:py-3">
+          <div className="text-xs sm:text-sm">
             <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
               View all sessions
             </a>
@@ -120,21 +120,21 @@ export function ProgressSummary() {
       </Card>
 
       {/* Streak Card */}
-      <Card>
-        <CardContent className="p-5">
+      <Card className="overflow-hidden shadow-sm sm:col-span-2 lg:col-span-1">
+        <CardContent className="p-4 sm:p-5">
           <div className="flex items-center">
-            <div className="flex-shrink-0 bg-yellow-100 rounded-md p-3">
-              <Star className="h-6 w-6 text-yellow-600" />
+            <div className="flex-shrink-0 bg-yellow-100 rounded-md p-2 sm:p-3">
+              <Star className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
             </div>
-            <div className="ml-5 w-0 flex-1">
+            <div className="ml-3 sm:ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
+                <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">
                   Streak
                 </dt>
                 <dd>
-                  <div className="text-lg font-medium text-gray-900">
+                  <div className="text-base sm:text-lg font-medium text-gray-900">
                     {isLoading ? (
-                      <Skeleton className="h-7 w-16" />
+                      <Skeleton className="h-6 sm:h-7 w-16" />
                     ) : (
                       `${streak} days`
                     )}
@@ -144,8 +144,8 @@ export function ProgressSummary() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="bg-gray-50 px-5 py-3">
-          <div className="text-sm">
+        <CardFooter className="bg-gray-50 px-4 sm:px-5 py-2 sm:py-3">
+          <div className="text-xs sm:text-sm">
             <a href="#" className="font-medium text-yellow-600 hover:text-yellow-500">
               View statistics
             </a>

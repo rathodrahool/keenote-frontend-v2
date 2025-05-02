@@ -34,10 +34,10 @@ export default function Dashboard() {
   return (
     <MainLayout>
       {/* Tabs for frequency selection */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+      <div className="border-b border-gray-200 mb-4 sm:mb-6">
+        <nav className="-mb-px flex space-x-4 sm:space-x-8 overflow-x-auto scrollbar-hide" aria-label="Tabs">
           <button
-            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
               activeTab === "daily"
                 ? "border-emerald-500 text-emerald-600"
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
@@ -47,7 +47,7 @@ export default function Dashboard() {
             Daily
           </button>
           <button
-            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
               activeTab === "weekly"
                 ? "border-emerald-500 text-emerald-600"
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
@@ -57,7 +57,7 @@ export default function Dashboard() {
             Weekly
           </button>
           <button
-            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
               activeTab === "monthly"
                 ? "border-emerald-500 text-emerald-600"
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
@@ -70,25 +70,25 @@ export default function Dashboard() {
       </div>
 
       {/* Dashboard header with date selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-        <h2 className="text-2xl font-semibold text-gray-900">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3 sm:mb-0">
           {activeTab === "daily" 
             ? "Today's Tasks" 
             : activeTab === "weekly" 
               ? "This Week's Tasks" 
               : "This Month's Tasks"}
         </h2>
-        <div className="mt-3 sm:mt-0 flex items-center">
-          <span className="mr-4 text-sm text-gray-500">{formattedDate}</span>
+        <div className="flex flex-wrap items-center">
+          <span className="text-xs sm:text-sm text-gray-500 mr-2 sm:mr-4">{formattedDate}</span>
           <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 border-gray-300 text-gray-700"
+                className="h-8 sm:h-9 text-xs sm:text-sm border-gray-300 text-gray-700"
               >
-                <Calendar className="h-4 w-4 mr-2" />
-                Change Date
+                <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="whitespace-nowrap">Change Date</span>
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="end">

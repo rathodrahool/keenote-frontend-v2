@@ -34,54 +34,86 @@ export function TaskItem({ task }: TaskItemProps) {
 
   return (
     <>
-      <div className="px-4 py-5 sm:px-6 flex items-center">
-        <div className="min-w-0 flex-1 flex items-center">
-          <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
-            <div>
-              <p className="text-base font-medium text-gray-900 truncate">
+      <div className="px-4 py-4 sm:py-5 sm:px-6 flex flex-col sm:flex-row sm:items-center">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-col sm:flex-row sm:items-start">
+            <div className="flex-1 min-w-0 mb-2 sm:mb-0 sm:mr-4">
+              <p className="text-sm sm:text-base font-medium text-gray-900 truncate">
                 {task.name}
               </p>
-              <p className="mt-2 flex items-center text-sm text-gray-500">
+              <div className="flex items-center mt-1">
                 <span 
-                  className="h-3 w-3 rounded-full mr-2"
+                  className="h-2 w-2 sm:h-3 sm:w-3 rounded-full mr-1.5 sm:mr-2 flex-shrink-0"
                   style={{ backgroundColor: category.color }}
                 ></span>
-                <span className="truncate">{category.name}</span>
-              </p>
+                <span className="text-xs sm:text-sm text-gray-500 truncate">{category.name}</span>
+              </div>
+              
+              {/* Mobile view: show task details in-line */}
+              <div className="flex flex-wrap items-center mt-2 sm:hidden space-x-3">
+                {task.task_type === TaskType.TIME_BASED && (
+                  <div className="flex items-center">
+                    <Clock className="h-4 w-4 text-gray-400 mr-1" />
+                    <span className="text-xs text-gray-500">
+                      {formatDuration(task.duration || 0)}
+                    </span>
+                  </div>
+                )}
+                {task.task_type === TaskType.YES_NO && (
+                  <div className="flex items-center">
+                    <Check className="h-4 w-4 text-gray-400 mr-1" />
+                    <span className="text-xs text-gray-500">
+                      {task.completed_count}/{task.target}
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center">
+                  <Calendar className="h-4 w-4 text-gray-400 mr-1" />
+                  <span className="text-xs text-gray-500">
+                    {task.task_frequency.charAt(0) + task.task_frequency.slice(1).toLowerCase()}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="hidden md:block">
+            
+            {/* Desktop view: show task details in separate column */}
+            <div className="hidden sm:block flex-shrink-0 sm:w-40 lg:w-48">
               {task.task_type === TaskType.TIME_BASED && (
-                <div className="flex items-center mt-2">
-                  <Clock className="h-5 w-5 text-gray-400 mr-1" />
-                  <span className="text-sm text-gray-500">
+                <div className="flex items-center">
+                  <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mr-1" />
+                  <span className="text-xs sm:text-sm text-gray-500">
                     {formatDuration(task.duration || 0)}
                   </span>
                 </div>
               )}
               {task.task_type === TaskType.YES_NO && (
-                <div className="flex items-center mt-2">
-                  <Check className="h-5 w-5 text-gray-400 mr-1" />
-                  <span className="text-sm text-gray-500">
+                <div className="flex items-center">
+                  <Check className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mr-1" />
+                  <span className="text-xs sm:text-sm text-gray-500">
                     {task.completed_count}/{task.target} completed
                   </span>
                 </div>
               )}
-              <div className="flex items-center mt-2">
-                <Calendar className="h-5 w-5 text-gray-400 mr-1" />
-                <span className="text-sm text-gray-500">
+              <div className="flex items-center mt-1">
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mr-1" />
+                <span className="text-xs sm:text-sm text-gray-500">
                   {task.task_frequency.charAt(0) + task.task_frequency.slice(1).toLowerCase()}
                 </span>
               </div>
             </div>
           </div>
         </div>
-        <div>
+        
+        <div className="mt-2 sm:mt-0 flex-shrink-0">
           {task.is_completed ? (
-            <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
+            <span className="inline-flex items-center px-2 sm:px-3 py-0.5 rounded-full text-xs sm:text-sm font-medium bg-green-100 text-green-800">
               Completed
             </span>
           ) : (
-            <Button onClick={handleComplete}>
+            <Button 
+              onClick={handleComplete}
+              className="h-8 sm:h-10 text-xs sm:text-sm px-3 sm:px-4"
+            >
               {task.task_type === TaskType.TIME_BASED ? 'Start' : 'Complete'}
             </Button>
           )}
