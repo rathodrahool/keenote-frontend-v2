@@ -9,22 +9,18 @@ export function useTimeSessions(query: FindAllQuery = {}) {
   const queryClient = useQueryClient();
 
   const timeSessionsQuery = useQuery<PaginatedResponse<TimeSession[]>>({
-    queryKey: ["/api/time-sessions", query],
+    queryKey: ["/api/time-session", query],
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const createTimeSession = useMutation({
     mutationFn: (sessionData: Partial<TimeSession>) => {
-      // Format date for API if it's a JS Date object
-      if (sessionData.date && sessionData.date instanceof Date) {
-        sessionData.date = formatDateForAPI(sessionData.date);
-      }
-      
+      // The API helper now handles date formatting
       return API.timeSessions.create(sessionData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/time-sessions"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] }); // Also refresh tasks as they may be updated
+      queryClient.invalidateQueries({ queryKey: ["/api/time-session"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/task"] }); // Also refresh tasks as they may be updated
       toast({
         title: "Success",
         description: "Session recorded successfully",
@@ -41,16 +37,12 @@ export function useTimeSessions(query: FindAllQuery = {}) {
 
   const updateTimeSession = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<TimeSession> }) => {
-      // Format date for API if it's a JS Date object
-      if (data.date && data.date instanceof Date) {
-        data.date = formatDateForAPI(data.date);
-      }
-      
+      // The API helper now handles date formatting
       return API.timeSessions.update(id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/time-sessions"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] }); // Also refresh tasks as they may be updated
+      queryClient.invalidateQueries({ queryKey: ["/api/time-session"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/task"] }); // Also refresh tasks as they may be updated
       toast({
         title: "Success",
         description: "Session updated successfully",
@@ -68,8 +60,8 @@ export function useTimeSessions(query: FindAllQuery = {}) {
   const deleteTimeSession = useMutation({
     mutationFn: (id: string) => API.timeSessions.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/time-sessions"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] }); // Also refresh tasks as they may be updated
+      queryClient.invalidateQueries({ queryKey: ["/api/time-session"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/task"] }); // Also refresh tasks as they may be updated
       toast({
         title: "Success",
         description: "Session deleted successfully",
@@ -104,7 +96,7 @@ export function useTimeSession(id: string) {
   const { toast } = useToast();
 
   const timeSessionQuery = useQuery<ApiResponse<TimeSession>>({
-    queryKey: [`/api/time-sessions/${id}`],
+    queryKey: [`/api/time-session/${id}`],
     enabled: !!id,
   });
 

@@ -82,13 +82,15 @@ export default function TimerModal({ open, onOpenChange, task }: TimerModalProps
     setIsRunning(false);
     setTimerStatus('completed');
     
-    // Create time session
+    // Create time session according to NestJS backend schema
     createTimeSession.mutate({
       task: task._id,
       date: formatDateForAPI(new Date()),
       status: SessionStatus.COMPLETED,
       duration_minutes: durationInMinutes,
-      completed_target: durationInMinutes // For task completion tracking
+      completed_target: durationInMinutes, // For task completion tracking
+      is_period_completed: false, // The backend will calculate this
+      period_id: `${task._id}_${formatDateForAPI(new Date())}` // Generate a unique period ID
     }, {
       onSuccess: () => {
         // Close modal after successfully saving
