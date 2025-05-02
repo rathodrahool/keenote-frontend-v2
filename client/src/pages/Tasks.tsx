@@ -55,8 +55,8 @@ export default function Tasks() {
   const search = useSearch();
   const queryParams = new URLSearchParams(search);
   
-  const categoryFilter = queryParams.get('category') || '';
-  const typeFilter = queryParams.get('type') || '';
+  const categoryFilter = queryParams.get('category') || 'all_categories';
+  const typeFilter = queryParams.get('type') || 'all_types';
 
   const [filters, setFilters] = useState({
     category: categoryFilter,
@@ -77,8 +77,12 @@ export default function Tasks() {
     
     // Update URL
     const params = new URLSearchParams();
-    if (newFilters.category) params.set('category', newFilters.category);
-    if (newFilters.type) params.set('type', newFilters.type);
+    if (newFilters.category && newFilters.category !== 'all_categories') {
+      params.set('category', newFilters.category);
+    }
+    if (newFilters.type && newFilters.type !== 'all_types') {
+      params.set('type', newFilters.type);
+    }
     
     setLocation(`/tasks${params.toString() ? `?${params.toString()}` : ''}`);
   };
@@ -140,7 +144,7 @@ export default function Tasks() {
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value="all_categories">All Categories</SelectItem>
                   {!categoriesLoading && categories.map((category) => (
                     <SelectItem key={category._id} value={category._id}>
                       <div className="flex items-center">
@@ -164,7 +168,7 @@ export default function Tasks() {
                   <SelectValue placeholder="All Types" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Types</SelectItem>
+                  <SelectItem value="all_types">All Types</SelectItem>
                   <SelectItem value={TaskType.TIME_BASED}>Time Based</SelectItem>
                   <SelectItem value={TaskType.YES_NO}>Yes/No</SelectItem>
                 </SelectContent>

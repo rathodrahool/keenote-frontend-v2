@@ -148,25 +148,24 @@ interface NavLinkProps {
 
 function NavLink({ href, active, icon, label }: NavLinkProps) {
   return (
-    <Link href={href}>
-      <a
+    <Link 
+      href={href}
+      className={cn(
+        "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+        active
+          ? "bg-emerald-50 text-emerald-700"
+          : "text-gray-700 hover:bg-gray-50"
+      )}
+    >
+      <span
         className={cn(
-          "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-          active
-            ? "bg-emerald-50 text-emerald-700"
-            : "text-gray-700 hover:bg-gray-50"
+          "h-5 w-5 mr-3",
+          active ? "text-emerald-500" : "text-gray-500"
         )}
       >
-        <span
-          className={cn(
-            "h-5 w-5 mr-3",
-            active ? "text-emerald-500" : "text-gray-500"
-          )}
-        >
-          {icon}
-        </span>
-        {label}
-      </a>
+        {icon}
+      </span>
+      {label}
     </Link>
   );
 }
@@ -177,14 +176,15 @@ interface CategoryLinkProps {
 
 function CategoryLink({ category }: CategoryLinkProps) {
   return (
-    <Link href={`/tasks?category=${category._id}`}>
-      <a className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
-        <span
-          className={`h-3 w-3 rounded-full mr-3`}
-          style={{ backgroundColor: category.color }}
-        ></span>
-        <span>{category.name}</span>
-      </a>
+    <Link 
+      href={`/tasks?category=${category._id}`}
+      className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50"
+    >
+      <span
+        className={`h-3 w-3 rounded-full mr-3`}
+        style={{ backgroundColor: category.color }}
+      ></span>
+      <span>{category.name}</span>
     </Link>
   );
 }
