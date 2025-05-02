@@ -59,7 +59,7 @@ export default function CreateTaskModal({
       category,
       task_type: taskType,
       task_frequency: frequency,
-      start_date: startDate ? new Date(startDate) : new Date(),
+      start_date: startDate, // Keep as string - backend expects ISO string format
       ...(taskType === TaskType.TIME_BASED ? { duration } : { target }),
     };
 
