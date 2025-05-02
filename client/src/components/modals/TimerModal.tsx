@@ -113,21 +113,21 @@ export default function TimerModal({ open, onOpenChange, task }: TimerModalProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent className="sm:max-w-md p-4 sm:p-6">
+        <DialogHeader className="pb-2">
+          <DialogTitle className="text-base sm:text-lg font-semibold">
             Time Tracking - <span className="text-emerald-600">{task.name}</span>
           </DialogTitle>
         </DialogHeader>
-        <div className="mt-6 text-center">
-          <div className="text-6xl font-bold text-gray-900 tracking-wider py-8">
+        <div className="mt-4 sm:mt-6 text-center">
+          <div className="text-4xl sm:text-6xl font-bold text-gray-900 tracking-wider py-6 sm:py-8">
             <span>{String(Math.floor(durationInMinutes)).padStart(2, '0')}</span>:
             <span>{String(remainingSeconds).padStart(2, '0')}</span>
           </div>
-          <div className="mt-2 grid grid-cols-3 gap-4">
+          <div className="mt-2 grid grid-cols-3 gap-2 sm:gap-4">
             {timerStatus === 'idle' && (
               <Button
-                className="col-span-3"
+                className="col-span-3 h-9 sm:h-10 text-xs sm:text-sm"
                 onClick={handleStart}
               >
                 Start
@@ -138,11 +138,12 @@ export default function TimerModal({ open, onOpenChange, task }: TimerModalProps
                 <Button
                   variant="outline"
                   onClick={handlePause}
+                  className="h-9 sm:h-10 text-xs sm:text-sm"
                 >
                   Pause
                 </Button>
                 <Button
-                  className="col-span-2"
+                  className="col-span-2 h-9 sm:h-10 text-xs sm:text-sm"
                   onClick={handleComplete}
                 >
                   Complete
@@ -153,11 +154,12 @@ export default function TimerModal({ open, onOpenChange, task }: TimerModalProps
               <>
                 <Button
                   onClick={handleResume}
+                  className="h-9 sm:h-10 text-xs sm:text-sm"
                 >
                   Resume
                 </Button>
                 <Button
-                  className="col-span-2"
+                  className="col-span-2 h-9 sm:h-10 text-xs sm:text-sm"
                   onClick={handleComplete}
                 >
                   Complete
@@ -166,7 +168,7 @@ export default function TimerModal({ open, onOpenChange, task }: TimerModalProps
             )}
             {timerStatus === 'completed' && (
               <Button
-                className="col-span-3"
+                className="col-span-3 h-9 sm:h-10 text-xs sm:text-sm"
                 variant="ghost"
                 onClick={handleCancel}
               >
@@ -175,21 +177,22 @@ export default function TimerModal({ open, onOpenChange, task }: TimerModalProps
             )}
           </div>
         </div>
-        <div className="mt-6">
-          <p className="text-sm text-gray-500 text-center">
+        <div className="mt-4 sm:mt-6">
+          <p className="text-xs sm:text-sm text-gray-500 text-center">
             Task duration goal: <span className="font-medium">{formatDuration(taskDuration)}</span>
           </p>
           <Progress
             value={progressPercent}
-            className="h-2.5 mt-2"
+            className="h-2 sm:h-2.5 mt-2"
           />
         </div>
-        <DialogFooter>
+        <DialogFooter className="mt-4 sm:mt-6">
           <Button
             type="button"
             variant="outline"
             onClick={handleCancel}
             disabled={createTimeSession.isPending}
+            className="mt-2 h-8 sm:h-9 text-xs sm:text-sm mx-auto sm:mx-0"
           >
             {createTimeSession.isPending ? "Saving..." : "Cancel"}
           </Button>

@@ -65,32 +65,32 @@ export default function CreateCategoryModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent className="sm:max-w-md p-4 sm:p-6">
+        <DialogHeader className="pb-2">
+          <DialogTitle className="text-base sm:text-lg font-semibold">
             {isEditing ? "Edit Category" : "Create New Category"}
           </DialogTitle>
         </DialogHeader>
-        <div className="mt-6">
-          <div className="mb-4">
-            <Label htmlFor="category-name">Category Name</Label>
+        <div className="mt-4 sm:mt-6">
+          <div className="mb-3 sm:mb-4">
+            <Label htmlFor="category-name" className="text-xs sm:text-sm font-medium">Category Name</Label>
             <Input
               id="category-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Work, Fitness, Learning"
-              className="mt-1"
+              className="mt-1 h-8 sm:h-9 text-xs sm:text-sm"
             />
           </div>
-          <div className="mb-4">
-            <Label htmlFor="category-color">Color</Label>
-            <div className="mt-2 grid grid-cols-8 gap-2">
+          <div className="mb-3 sm:mb-4">
+            <Label htmlFor="category-color" className="text-xs sm:text-sm font-medium">Color</Label>
+            <div className="mt-2 grid grid-cols-6 sm:grid-cols-8 gap-1.5 sm:gap-2">
               {COLOR_OPTIONS.map((color) => (
                 <button
                   key={color.hex}
                   type="button"
-                  className={`h-8 w-8 rounded-full ${color.class} focus:outline-none ${
-                    selectedColor === color.hex ? "ring-2 ring-offset-2" : ""
+                  className={`h-7 w-7 sm:h-8 sm:w-8 rounded-full focus:outline-none ${
+                    selectedColor === color.hex ? "ring-2 ring-offset-2 ring-emerald-500" : ""
                   }`}
                   style={{ backgroundColor: color.hex }}
                   onClick={() => setSelectedColor(color.hex)}
@@ -100,12 +100,13 @@ export default function CreateCategoryModal({
             </div>
           </div>
         </div>
-        <DialogFooter className="sm:justify-between">
+        <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-between mt-4 sm:mt-6 gap-2 sm:gap-0">
           <Button
             type="button"
             variant="outline"
             onClick={handleClose}
             disabled={isPending}
+            className="mt-2 sm:mt-0 h-8 sm:h-9 text-xs sm:text-sm"
           >
             Cancel
           </Button>
@@ -113,6 +114,7 @@ export default function CreateCategoryModal({
             type="button" 
             onClick={handleSave}
             disabled={!name.trim() || isPending}
+            className="h-8 sm:h-9 text-xs sm:text-sm"
           >
             {isPending ? "Saving..." : "Save"}
           </Button>
