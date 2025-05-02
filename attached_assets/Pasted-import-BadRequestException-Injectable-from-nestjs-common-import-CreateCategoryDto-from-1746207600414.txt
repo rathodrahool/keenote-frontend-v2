@@ -1,0 +1,84 @@
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Category, CategoryDocument } from './entities/category.entity';
+import { Model } from 'mongoose';
+import { ApiResponseHelper } from 'src/shared/response/api-response.helper';
+import { ERROR, SUCCESS } from 'src/shared/constants/constant';
+import {
+  IApiResponse,
+  IFindAllQuery,
+  IPaginatedResponse,
+} from 'src/shared/types/response.type';
+import { paginate } from 'src/util/paginate';
+
+@Injectable()
+export class CategoryService {
+  constructor(
+    @InjectModel(Category.name)
+    private readonly categoryModel: Model<CategoryDocument>,
+  ) {}
+  async create(
+    createCategoryDto: CreateCategoryDto,
+  ): Promise<IApiResponse<Category>> {
+    const category = new this.categoryModel(createCategoryDto);
+    const result = await category.save();
+    return ApiResponseHelper.created(result, SUCCESS.RECORD_ADDED('category'));
+  }
+
+  async findAll(query: IFindAllQuery): Promise<IPaginatedResponse<Category[]>> {
+    const templates = await paginate<Category>(this.categoryModel, query, [
+      'name',
+      'color',
+    ]);
+
+    return ApiResponseHelper.paginate(
+      templates.results,
+      templates.total,
+      templates.page,
+      query.limit,
+      SUCCESS.RECORD_FETCHED('category'),
+    );
+  }
+  async findOne(id: string): Promise<IApiResponse<Category>> {
+    const category = await this.categoryModel.findById(id);
+    if (!category) {
+      throw new BadRequestException(ERROR.RECORD_NOT_FOUND('category'));
+    }
+
+    return ApiResponseHelper.success(
+      category,
+      SUCCESS.RECORD_FOUND('category'),
+    );
+  }
+
+  async update(
+    id: string,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<IApiResponse<[]>> {
+    const category = await this.categoryModel.findByIdAndUpdate(
+      id,
+      updateCategoryDto,
+      {
+        new: true,
+      },
+    );
+
+    return ApiResponseHelper.success(
+      [],
+      category
+        ? SUCCESS.RECORD_UPDATED('category')
+        : SUCCESS.RECORD_NOT_FOUND('category'),
+    );
+  }
+
+  async remove(id: string): Promise<IApiResponse<[]>> {
+    const category = await this.categoryModel.findById(id);
+    if (!category) {
+      throw new BadRequestException(ERROR.RECORD_NOT_FOUND('category'));
+    }
+    await category.softDelete();
+    return ApiResponseHelper.success([], SUCCESS.RECORD_DELETED('category'));
+  }
+}

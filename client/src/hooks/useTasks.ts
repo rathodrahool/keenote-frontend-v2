@@ -9,24 +9,17 @@ export function useTasks(query: FindAllQuery = {}) {
   const queryClient = useQueryClient();
 
   const tasksQuery = useQuery<PaginatedResponse<Task[]>>({
-    queryKey: ["/api/tasks", query],
+    queryKey: ["/api/task", query],
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const createTask = useMutation({
     mutationFn: (taskData: Partial<Task>) => {
-      // Format date for API if it's a JS Date object
-      if (taskData.start_date && taskData.start_date instanceof Date) {
-        taskData.start_date = formatDateForAPI(taskData.start_date);
-      }
-      if (taskData.end_date && taskData.end_date instanceof Date) {
-        taskData.end_date = formatDateForAPI(taskData.end_date);
-      }
-      
+      // The API helper handles date formatting now
       return API.tasks.create(taskData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/task"] });
       toast({
         title: "Success",
         description: "Task created successfully",
@@ -43,18 +36,11 @@ export function useTasks(query: FindAllQuery = {}) {
 
   const updateTask = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Task> }) => {
-      // Format date for API if it's a JS Date object
-      if (data.start_date && data.start_date instanceof Date) {
-        data.start_date = formatDateForAPI(data.start_date);
-      }
-      if (data.end_date && data.end_date instanceof Date) {
-        data.end_date = formatDateForAPI(data.end_date);
-      }
-      
+      // The API helper handles date formatting now
       return API.tasks.update(id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/task"] });
       toast({
         title: "Success",
         description: "Task updated successfully",
@@ -72,7 +58,7 @@ export function useTasks(query: FindAllQuery = {}) {
   const deleteTask = useMutation({
     mutationFn: (id: string) => API.tasks.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/task"] });
       toast({
         title: "Success",
         description: "Task deleted successfully",
@@ -89,9 +75,9 @@ export function useTasks(query: FindAllQuery = {}) {
 
   const updateTaskCompletion = useMutation({
     mutationFn: ({ id, completedTarget }: { id: string; completedTarget: number }) =>
-      API.tasks.updateCompletion(id, completedTarget),
+      API.tasks.updateTaskCompletion(id, completedTarget),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/task"] });
       toast({
         title: "Success",
         description: "Task progress updated successfully",
@@ -127,7 +113,7 @@ export function useTask(id: string) {
   const { toast } = useToast();
 
   const taskQuery = useQuery<ApiResponse<Task>>({
-    queryKey: [`/api/tasks/${id}`],
+    queryKey: [`/api/task/${id}`],
     enabled: !!id,
   });
 
