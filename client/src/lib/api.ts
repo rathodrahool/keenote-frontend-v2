@@ -1,8 +1,10 @@
 import { apiRequest } from "./queryClient";
 import { formatDateForAPI } from "./utils";
 
-// API base URL - pointing to NestJS backend
-const API_BASE_URL = "http://localhost:3000/api";
+// API base URL - for the NestJS backend
+// Use a relative path which will be proxied to the actual backend in development
+// In production, configure this to point to the actual API server
+const API_BASE_URL = "/api";
 
 export const API = {
   // Category endpoints
