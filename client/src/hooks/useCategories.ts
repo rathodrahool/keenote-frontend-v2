@@ -1,21 +1,31 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { API } from "@/lib/api";
-import { Category, ApiResponse, PaginatedResponse, FindAllQuery } from "@/types";
+import { API, IFindAllQuery, ApiResponse } from "@/lib/api";
+import { Category, PaginatedResponse, FindAllQuery } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 
-export function useCategories(query: FindAllQuery = {}) {
+export function useCategories(page = 1, limit = 10) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const categoriesQuery = useQuery<PaginatedResponse<Category[]>>({
-    queryKey: ["/api/category", query],
-    staleTime: 5 * 60 * 1000, // 5 minutes
+  const query: IFindAllQuery = {
+    page,
+    limit,
+    order: { created_at: 'desc' }
+  };
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['categories', page, limit],
+    queryFn: async () => {
+      const response = await API.categories.getAll(query);
+      return response;
+    }
   });
 
   const createCategory = useMutation({
-    mutationFn: (categoryData: Partial<Category>) => API.categories.create(categoryData),
+    mutationFn: (newCategory: Omit<Category, '_id' | 'created_at' | 'updated_at' | 'deleted_at'>) => 
+      API.categories.create(newCategory),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/category"] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
       toast({
         title: "Success",
         description: "Category created successfully",
@@ -31,10 +41,10 @@ export function useCategories(query: FindAllQuery = {}) {
   });
 
   const updateCategory = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Category> }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<Category> }) => 
       API.categories.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/category"] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
       toast({
         title: "Success",
         description: "Category updated successfully",
@@ -52,7 +62,7 @@ export function useCategories(query: FindAllQuery = {}) {
   const deleteCategory = useMutation({
     mutationFn: (id: string) => API.categories.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/category"] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
       toast({
         title: "Success",
         description: "Category deleted successfully",
@@ -68,18 +78,13 @@ export function useCategories(query: FindAllQuery = {}) {
   });
 
   return {
-    categories: categoriesQuery.data?.data || [],
-    isLoading: categoriesQuery.isLoading,
-    isError: categoriesQuery.isError,
-    error: categoriesQuery.error,
+    categories: data?.data || [],
+    meta: data?.meta,
+    isLoading,
+    error,
     createCategory,
     updateCategory,
-    deleteCategory,
-    pagination: {
-      page: categoriesQuery.data?.page || 1,
-      limit: categoriesQuery.data?.limit || 10,
-      total: categoriesQuery.data?.total || 0,
-    },
+    deleteCategory
   };
 }
 

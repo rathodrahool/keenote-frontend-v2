@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MoreHorizontal, Plus, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import CreateCategoryModal from "@/components/modals/CreateCategoryModal";
 import { Category } from "@/types";
 import {
@@ -39,7 +39,9 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function Categories() {
-  const { categories, isLoading, deleteCategory } = useCategories();
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const { categories, meta, isLoading, deleteCategory } = useCategories(page, limit);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
@@ -61,6 +63,10 @@ export default function Categories() {
         }
       });
     }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
   };
 
   return (
@@ -164,6 +170,37 @@ export default function Categories() {
               </TableBody>
             </Table>
           </div>
+
+          {/* Pagination Controls */}
+          {meta && meta.total > limit && (
+            <div className="flex items-center justify-between px-4 py-3 sm:px-6 border-t">
+              <div className="flex items-center text-xs sm:text-sm text-gray-500">
+                Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, meta.total)} of {meta.total} results
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={!meta.hasPreviousPage}
+                  className="h-8 px-2 sm:px-3"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-1">Previous</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={!meta.hasNextPage}
+                  className="h-8 px-2 sm:px-3"
+                >
+                  <span className="hidden sm:inline mr-1">Next</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 

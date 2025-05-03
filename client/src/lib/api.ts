@@ -1,134 +1,198 @@
-import { apiRequest } from "./queryClient";
-import { formatDateForAPI } from "./utils";
+import axios, { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
-// API base URL - for the NestJS backend
-// Use a relative path which will be proxied to the actual backend in development
-// In production, configure this to point to the actual API server
-const API_BASE_URL = "/api";
+// API base URL
+const API_BASE_URL = "http://localhost:3000/api";
+
+// Create axios instance with default config
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add request interceptor for authentication if needed
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  return config;
+});
+
+// Add response interceptor for error handling
+api.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  (error: AxiosError) => {
+    // Handle errors here (e.g., show toast notifications)
+    console.error('API Error:', error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
+
+// Pagination and Query Interfaces
+export interface IPaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface IFindAllQuery extends Partial<IPaginationMeta> {
+  search?: string;
+  order?: { [key: string]: 'asc' | 'desc' | 1 | -1 };
+}
+
+export interface ApiResponse<T> {
+  status: number;
+  message: string;
+  data: T;
+  meta?: IPaginationMeta;
+}
+
+// Types
+interface Category {
+  _id: string;
+  name: string;
+  color: string;
+  is_archived: boolean;
+  status: 'ACTIVE' | 'INACTIVE';
+  deleted: boolean;
+  deleted_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  start_date: string;
+  end_date?: string;
+  completedTarget?: number;
+  // Add other task fields as needed
+}
+
+interface TimeSession {
+  id: string;
+  date: string;
+  duration: number;
+  // Add other time session fields as needed
+}
 
 export const API = {
   // Category endpoints
   categories: {
-    getAll: async (query = {}) => {
-      const queryParams = new URLSearchParams(query as Record<string, string>).toString();
-      const url = `${API_BASE_URL}/category${queryParams ? `?${queryParams}` : ''}`;
-      const response = await apiRequest("GET", url);
-      return response.json();
+    getAll: async (query: IFindAllQuery = {}) => {
+      const { data } = await api.get<ApiResponse<Category[]>>('/category', { 
+        params: {
+          ...query,
+          order: query.order ? JSON.stringify(query.order) : undefined
+        }
+      });
+      return data;
     },
     getById: async (id: string) => {
-      const response = await apiRequest("GET", `${API_BASE_URL}/category/${id}`);
-      return response.json();
+      const { data } = await api.get<ApiResponse<Category>>(`/category/${id}`);
+      return data;
     },
-    create: async (data: any) => {
-      const response = await apiRequest("POST", `${API_BASE_URL}/category`, data);
-      return response.json();
+    create: async (categoryData: Omit<Category, '_id' | 'created_at' | 'updated_at' | 'deleted_at'>) => {
+      const { data } = await api.post<ApiResponse<Category>>('/category', categoryData);
+      return data;
     },
-    update: async (id: string, data: any) => {
-      const response = await apiRequest("PATCH", `${API_BASE_URL}/category/${id}`, data);
-      return response.json();
+    update: async (id: string, categoryData: Partial<Category>) => {
+      const { data } = await api.patch<ApiResponse<Category>>(`/category/${id}`, categoryData);
+      return data;
     },
     delete: async (id: string) => {
-      const response = await apiRequest("DELETE", `${API_BASE_URL}/category/${id}`);
-      return response.json();
+      const { data } = await api.delete<ApiResponse<Category>>(`/category/${id}`);
+      return data;
     }
   },
 
   // Task endpoints
   tasks: {
     getAll: async (query = {}) => {
-      const queryParams = new URLSearchParams(query as Record<string, string>).toString();
-      const url = `${API_BASE_URL}/task${queryParams ? `?${queryParams}` : ''}`;
-      const response = await apiRequest("GET", url);
-      return response.json();
+      const { data } = await api.get<Task[]>('/task', { params: query });
+      return data;
     },
     getById: async (id: string) => {
-      const response = await apiRequest("GET", `${API_BASE_URL}/task/${id}`);
-      return response.json();
+      const { data } = await api.get<Task>(`/task/${id}`);
+      return data;
     },
-    create: async (data: any) => {
-      // Format dates to DD-MM-YYYY as required by the backend
+    create: async (taskData: Omit<Task, 'id'>) => {
       const formattedData = {
-        ...data,
-        start_date: formatDateToDDMMYYYY(data.start_date),
-        end_date: data.end_date ? formatDateToDDMMYYYY(data.end_date) : undefined
+        ...taskData,
+        start_date: formatDateToDDMMYYYY(taskData.start_date),
+        end_date: taskData.end_date ? formatDateToDDMMYYYY(taskData.end_date) : undefined
       };
-      
-      const response = await apiRequest("POST", `${API_BASE_URL}/task`, formattedData);
-      return response.json();
+      const { data } = await api.post<Task>('/task', formattedData);
+      return data;
     },
-    update: async (id: string, data: any) => {
-      // Format dates to DD-MM-YYYY as required by the backend
-      const formattedData = { ...data };
-      if (data.start_date) formattedData.start_date = formatDateToDDMMYYYY(data.start_date);
-      if (data.end_date) formattedData.end_date = formatDateToDDMMYYYY(data.end_date);
+    update: async (id: string, taskData: Partial<Task>) => {
+      const formattedData = { ...taskData };
+      if (taskData.start_date) formattedData.start_date = formatDateToDDMMYYYY(taskData.start_date);
+      if (taskData.end_date) formattedData.end_date = formatDateToDDMMYYYY(taskData.end_date);
       
-      const response = await apiRequest("PATCH", `${API_BASE_URL}/task/${id}`, formattedData);
-      return response.json();
+      const { data } = await api.patch<Task>(`/task/${id}`, formattedData);
+      return data;
     },
     delete: async (id: string) => {
-      const response = await apiRequest("DELETE", `${API_BASE_URL}/task/${id}`);
-      return response.json();
+      const { data } = await api.delete(`/task/${id}`);
+      return data;
     },
     updateTaskCompletion: async (id: string, completedTarget: number) => {
-      const response = await apiRequest("PATCH", `${API_BASE_URL}/task/${id}/complete`, { completedTarget });
-      return response.json();
+      const { data } = await api.patch<Task>(`/task/${id}/complete`, { completedTarget });
+      return data;
     }
   },
 
   // Time Session endpoints
   timeSessions: {
     getAll: async (query = {}) => {
-      const queryParams = new URLSearchParams(query as Record<string, string>).toString();
-      const url = `${API_BASE_URL}/time-session${queryParams ? `?${queryParams}` : ''}`;
-      const response = await apiRequest("GET", url);
-      return response.json();
+      const { data } = await api.get<TimeSession[]>('/time-session', { params: query });
+      return data;
     },
     getById: async (id: string) => {
-      const response = await apiRequest("GET", `${API_BASE_URL}/time-session/${id}`);
-      return response.json();
+      const { data } = await api.get<TimeSession>(`/time-session/${id}`);
+      return data;
     },
-    create: async (data: any) => {
-      // Format date to DD-MM-YYYY as required by the backend
+    create: async (sessionData: Omit<TimeSession, 'id'>) => {
       const formattedData = {
-        ...data,
-        date: formatDateToDDMMYYYY(data.date)
+        ...sessionData,
+        date: formatDateToDDMMYYYY(sessionData.date)
       };
-      
-      const response = await apiRequest("POST", `${API_BASE_URL}/time-session`, formattedData);
-      return response.json();
+      const { data } = await api.post<TimeSession>('/time-session', formattedData);
+      return data;
     },
-    update: async (id: string, data: any) => {
-      // Format date to DD-MM-YYYY if present
-      const formattedData = { ...data };
-      if (data.date) formattedData.date = formatDateToDDMMYYYY(data.date);
+    update: async (id: string, sessionData: Partial<TimeSession>) => {
+      const formattedData = { ...sessionData };
+      if (sessionData.date) formattedData.date = formatDateToDDMMYYYY(sessionData.date);
       
-      const response = await apiRequest("PATCH", `${API_BASE_URL}/time-session/${id}`, formattedData);
-      return response.json();
+      const { data } = await api.patch<TimeSession>(`/time-session/${id}`, formattedData);
+      return data;
     },
     delete: async (id: string) => {
-      const response = await apiRequest("DELETE", `${API_BASE_URL}/time-session/${id}`);
-      return response.json();
+      const { data } = await api.delete(`/time-session/${id}`);
+      return data;
     }
   }
 };
 
-// Helper function to format date to DD-MM-YYYY as required by the backend
+// Helper function to format date to DD-MM-YYYY
 function formatDateToDDMMYYYY(date: string | Date): string {
   if (typeof date === 'string') {
-    // If it's already in YYYY-MM-DD format (from input type="date")
     if (date.match(/^\d{4}-\d{2}-\d{2}$/)) {
       const [year, month, day] = date.split('-');
       return `${day}-${month}-${year}`;
     }
-    return date; // Assume it's already in correct format
+    return date;
   }
   
   if (date instanceof Date) {
     const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 because months are 0-indexed
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   }
   
-  return ''; // Return empty string as fallback
+  return '';
 }

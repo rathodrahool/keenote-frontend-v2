@@ -4,9 +4,12 @@ export interface Category {
   _id: string;
   name: string;
   color: string;
-  status: Status;
-  created_at?: string;
-  updated_at?: string;
+  is_archived: boolean;
+  status: 'ACTIVE' | 'INACTIVE';
+  deleted: boolean;
+  deleted_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Task {
