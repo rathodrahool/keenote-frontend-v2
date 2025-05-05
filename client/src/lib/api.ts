@@ -62,7 +62,7 @@ interface Category {
 }
 
 interface Task {
-  id: string;
+  _id: string;
   title: string;
   description?: string;
   start_date: string;
@@ -110,8 +110,13 @@ export const API = {
 
   // Task endpoints
   tasks: {
-    getAll: async (query = {}) => {
-      const { data } = await api.get<Task[]>('/task', { params: query });
+    getAll: async (query: IFindAllQuery = {}) => {
+      const { data } = await api.get<ApiResponse<Task[]>>('/task', {
+        params: {
+          ...query,
+          order: query.order ? JSON.stringify(query.order) : undefined
+        }
+      });
       return data;
     },
     getById: async (id: string) => {
